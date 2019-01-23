@@ -26,8 +26,7 @@ class Home extends Component {
             if (error) {
               return <Text>{error.message}</Text>
             } else if (props) {
-              console.log(props)
-              return <Text>Este es un texto</Text>
+              return <ListPage viewer={props.viewer} />
             }
             return <Text>Loading</Text>
           }}

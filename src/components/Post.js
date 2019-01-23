@@ -4,13 +4,16 @@ import {
   graphql
 } from 'react-relay';
 import DeletePostMutation from '../mutations/DeletePostMutation';
+import { View, Text, Image, StyleSheet } from 'react-native'
 
 class Post extends React.Component {
 
   render () {
     return (
-      <View>
-        <Text>Este es un texto</Text>
+      <View >
+        <Image 
+          source={{uri: this.props.post.imageUrl}}
+          style={styles.image} />
       </View>
     )
   }
@@ -31,4 +34,11 @@ const FragmentContainer =  createFragmentContainer(Post, graphql`
   }
 `)
 
+const styles = StyleSheet.create({
+  image: {
+    resizeMode: 'contain',
+    width: 300,
+    height: 300,
+  }
+})
 export default FragmentContainer

@@ -1,18 +1,41 @@
 import React from 'react'
-import Post from './Post'
 import {
   createFragmentContainer,
   graphql
 } from 'react-relay'
-import { View, Text } from 'react-native'
+import { View, Text, TextInput, StyleSheet } from 'react-native'
+import Button from '../stateless/Button'
+import CreatePage from './CreatePage'
+import Post from './Post'
 
 class ListPage extends React.Component {
 
+  state={
+    create :false,
+  }
+
+  create = () => <CreatePage />
+  
+  show = (props) => (
+      <View>
+          <View>
+            {props.viewer.allPosts.edges.map(({node}) =>
+              <Post key={node.id} post={node} viewer={props.viewer} />
+            )}
+          </View>
+      </View>
+    )
+
   render () {
-    console.log('ListPage - render - environment', this.props.relay.environment)
+    const { create } = this.state
+    const showComponent = create ? this.create() : this.show(this.props)
+
     return (
       <View>
-        <Text>Este es un texto</Text>
+        { showComponent } 
+        <Button onPress={() => {this.setState({create : true})}} ><Text>Create Post</Text></Button>
+        <Text />
+        <Button onPress={() => {this.setState({create : false})}} ><Text>Test</Text></Button>
       </View>
     )
   }
@@ -33,3 +56,5 @@ export default createFragmentContainer(ListPage, graphql`
     }
   }
 `)
+
+
