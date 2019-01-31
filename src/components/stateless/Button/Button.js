@@ -1,8 +1,8 @@
-import React from 'react'
-import { View, TouchableOpacity } from 'react-native'
+import React, {ReactNode} from 'react'
+import { TouchableOpacity } from 'react-native'
 import stylesButton from './Button.styles'
 
-const Button = props => {
+const Button = (props) => {
   const { children } = props
   return (
     <TouchableOpacity
