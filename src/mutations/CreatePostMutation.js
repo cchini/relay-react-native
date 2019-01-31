@@ -2,7 +2,7 @@ import {
   commitMutation,
   graphql,
 } from 'react-relay'
-import environment from '../../relayEnviroment'
+import environment from '../enviroment/graphRelay'
 import {ConnectionHandler} from 'relay-runtime'
 
 const mutation = graphql`
@@ -15,16 +15,16 @@ const mutation = graphql`
       }
     }
   }
-`;
+`
 
-let tempID = 0;
+let tempID = 0
 
-export default function CreatePostMutation(description, imageUrl, viewerId, callback) {
+export default function CreatePostMutation(post) {
   const variables = {
     input: {
-      description,
-      imageUrl,
-      clientMutationId: ""
+      description: post.description,
+      imageUrl: post.imageUrl,
+      clientMutationId: '',
     },
   }
   commitMutation(
@@ -34,7 +34,7 @@ export default function CreatePostMutation(description, imageUrl, viewerId, call
       variables,
       onCompleted: (response) => {
         console.log(response, environment)
-        callback()
+        post.callback()
       },
       onError: err => console.error(err),
       optimisticUpdater: (proxyStore) => {
@@ -42,12 +42,13 @@ export default function CreatePostMutation(description, imageUrl, viewerId, call
         const id = 'client:newPost:' + tempID++
         const newPost = proxyStore.create(id, 'Post')
         newPost.setValue(id, 'id')
-        newPost.setValue(description, 'description')
-        newPost.setValue(imageUrl, 'imageUrl')
+        newPost.setValue(post.description, 'description')
+        newPost.setValue(post.imageUrl, 'imageUrl')
 
         // 2 - add `newPost` to the store
-        const viewerProxy = proxyStore.get(viewerId)
-        const connection = ConnectionHandler.getConnection(viewerProxy, 'ListPage_allPosts')
+        const viewerProxy = proxyStore.get(post.viewerId)
+        const connection = ConnectionHandler.getConnection(viewerProxy, 'HomeAllPostQuery')
+
         if (connection) {
           ConnectionHandler.insertEdgeAfter(connection, newPost)
         }
@@ -58,12 +59,12 @@ export default function CreatePostMutation(description, imageUrl, viewerId, call
         const newPost = createPostField.getLinkedRecord('post')
 
         // 2 - add `newPost` to the store
-        const viewerProxy = proxyStore.get(viewerId)
-        const connection = ConnectionHandler.getConnection(viewerProxy, 'ListPage_allPosts')
+        const viewerProxy = proxyStore.get(post.viewerId)
+        const connection = ConnectionHandler.getConnection(viewerProxy, 'HomeAllPostQuery')
         if (connection) {
           ConnectionHandler.insertEdgeAfter(connection, newPost)
         }
       },
-    },
+    }
   )
 }
